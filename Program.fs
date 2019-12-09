@@ -40,6 +40,20 @@
     let delayOption computation = 
         delay computation
         |> toOption 
+    let toUpdate<'a,'b> (f: unit -> Async<'a>) (update: 'a -> 'b) 
+        : unit -> Async<'b>  = 
+        fun () -> 
+            async {
+                let! (res : 'a) = f ()
+                return update res  
+            }
+    let toResult<'a,'b> (f: unit -> Async<'a>)
+        : unit -> Async<Result<'a,'b>> =
+        fun () ->
+            async {
+                let! (res : 'a) = f ()
+                return Result.Ok res  
+                }        
 
 open System
 
